@@ -1,0 +1,65 @@
+步骤 1：备份 Netplan 配置文件为防止配置错误，先备份现有配置文件：bash
+
+sudo cp /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.bak
+
+步骤 2：编辑 Netplan 配置文件打开配置文件：bash
+
+sudo nano /etc/netplan/00-installer-config.yaml
+
+将文件内容替换为以下内容：yaml
+
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    ens33:
+      dhcp4: no
+      addresses:
+        - 192.168.0.100/24  # 固定 IP 地址
+      gateway4: 192.168.0.1  # 网关地址
+      nameservers:
+        addresses:
+          - 8.8.8.8  # 主 DNS
+          - 8.8.4.4  # 备用 DNS
+
+说明：ens33：你的网络接口名称。
+192.168.0.100/24：固定 IP 地址，/24 表示子网掩码 255.255.255.0。确保 192.168.0.100 未被其他设备占用（稍后会教你检查）。
+gateway4：192.168.0.1，你的网关地址。
+nameservers：使用 Google DNS（8.8.8.8 和 8.8.4.4），也可替换为你的路由器 IP（如 192.168.0.1）。
+
+保存文件：按 Ctrl+O，回车保存。
+按 Ctrl+X 退出。
+
+步骤 3：检查 IP 地址是否被占用在设置固定 IP（如 192.168.0.100）前，确保它未被其他设备使用：bash
+
+ping 192.168.0.100
+
+如果返回 Destination Host Unreachable 或无响应，说明 IP 可用。
+如果有响应，说明 IP 已被占用，请选择其他 IP（如 192.168.0.101）并修改配置文件中的 addresses 字段。
+
+步骤 4：验证和应用配置检查配置文件语法并尝试应用：bash
+
+sudo netplan try
+
+这会验证配置并尝试应用，等待 120 秒。如果配置正确，会自动应用；如果有错误，会提示你修正。
+按回车确认应用（或等待自动应用）。
+
+应用配置：bash
+
+sudo netplan apply
+
+步骤 5：验证固定 IP 是否生效检查 IP 地址：bash
+
+ip addr show ens33
+
+确认 ens33 接口显示 192.168.0.100/24。
+验证网络连通性：bash
+
+ping 8.8.8.8
+
+如果返回数据包，说明网络连接正常。
+验证 DNS 解析：bash
+
+ping google.com
+
+如果能解析并 ping 通，说明 DNS 配置正确。
