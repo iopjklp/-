@@ -1,0 +1,38 @@
+cd /home/kali/Desktop
+./tools.sh
+source ~/hexstrike_env/bin/activate
+cd /home/kali/Desktop/hexstrike-ai-master
+python3 hexstrike_server.py
+
+cd /home/kali/Desktop
+./5ire-0.13.2-x86_64.AppImage --no-sandbox
+
+
+
+
+
+
+如果黑屏：# 切换到kali用户环境
+su - kali
+cd /home/kali/Desktop
+
+# 允许root连接X11
+xhost +local:root
+
+# 回到root运行
+exit
+./5ire-0.13.2-x86_64.AppImage --no-sandbox
+
+方案2：设置Xauthority文件
+# 复制kali用户的Xauthority到root
+cd /home/kali/Desktop
+cp /home/kali/.Xauthority /root/
+
+# 设置正确的权限
+chown root:root /root/.Xauthority
+
+# 设置DISPLAY变量
+export DISPLAY=:0
+export XAUTHORITY=/root/.Xauthority
+
+./5ire-0.13.2-x86_64.AppImage --no-sandbox
