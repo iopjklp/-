@@ -1,0 +1,67 @@
+你希望将 Kali 虚拟机的 IP 地址固定为 192.168.0.25，并使用桥接模式。以下是基于你的网络环境，通过修改 /etc/network/interfaces 文件来设置固定 IP 的详细步骤（推荐此方法，因为它简单且适合 Kali 的服务器环境）。步骤 1：备份网络配置文件为防止配置错误，先备份现有配置文件：bash
+
+sudo cp /etc/network/interfaces /etc/network/interfaces.bak
+
+步骤 2：编辑网络配置文件打开 /etc/network/interfaces 文件：bash
+
+sudo nano /etc/network/interfaces
+
+将文件内容替换为以下内容：bash
+
+# This file describes the network interfaces available on the system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto eth0
+iface eth0 inet static
+    address 192.168.0.25
+    netmask 255.255.255.0
+    gateway 192.168.0.1
+    dns-nameservers 8.8.8.8 8.8.4.4
+
+说明：eth0：你的网络接口名称。
+address：固定 IP 地址为 192.168.0.25。
+netmask：子网掩码 255.255.255.0。
+gateway：网关地址 192.168.0.1。
+dns-nameservers：使用 Google DNS（8.8.8.8 和 8.8.4.4），也可替换为你的路由器 IP（如 192.168.0.1）。
+
+保存文件：按 Ctrl+O，回车保存。
+按 Ctrl+X 退出。
+
+步骤 3：配置 DNSKali 的 DNS 设置可能被 NetworkManager 覆盖，因此需要确保 /etc/resolv.conf 包含正确的 DNS 服务器。编辑 /etc/resolv.conf：bash
+
+sudo nano /etc/resolv.conf
+
+添加或修改为以下内容：bash
+
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+
+保存并退出（Ctrl+O，回车，Ctrl+X）。
+防止 DNS 被覆盖（如果使用 NetworkManager）：编辑 NetworkManager 配置文件：bash
+
+sudo nano /etc/NetworkManager/NetworkManager.conf
+
+在 [main] 部分添加：bash
+
+dns=none
+
+保存并重启 NetworkManager：bash
+
+sudo systemctl restart NetworkManager
+
+步骤 4：应用网络配置重启网络服务：bash
+
+sudo systemctl restart networking
+
+注意：如果 systemctl restart networking 不生效，可以尝试：bash
+
+sudo ifdown eth0 && sudo ifup eth0
+
+如果网络仍未生效，重启虚拟机：bash
+
+sudo reboot
