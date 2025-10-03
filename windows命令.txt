@@ -1,0 +1,23 @@
+系统详细信息：systeminfo
+主机名：hostname
+当前用户权限：whoami /priv
+查看环境变量：set
+wmic qfe get Caption,Description,HotFixID,Installedon #补丁信息
+
+网络配置 ipconfig /all
+ARP缓存表 arp - a
+活动连接与进程PID      netstat -ano
+路由表 route print
+防火墙状态(旧系统)  netsh firewall show state
+查看防火墙配置 netsh advfirewall show allprofiles
+
+本地用户列表  net user
+查看指定用户详情  net user [username]
+本地组列表  net localgroup
+管理员组成员  net localgroup Administrators
+域组列表(域环境) net group /domain
+
+查看共享资源  net share
+查看目标共享(需权限) net view\\[IP]
+当前会话(需管理员)  net session
+映射的共享列表  net use
